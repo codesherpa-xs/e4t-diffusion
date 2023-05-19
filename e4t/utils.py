@@ -65,7 +65,7 @@ def download_from_huggingface(repo, filename, **kwargs):
 
 
 MODELS = {
-    "/content/drive/e4t/e4t-diffusion-ffhq-celebahq-v1": {
+    "/content/drive/MyDrive/e4t/e4t-diffusion-ffhq-celebahq-v1": {
         "repo": "mshing/e4t-diffusion-ffhq-celebahq-v1",
         "subfolder": None,
     }
