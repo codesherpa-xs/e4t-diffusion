@@ -78,7 +78,7 @@ def load_config_from_pretrained(pretrained_model_name_or_path):
         if "config.json" not in pretrained_model_name_or_path:
             pretrained_model_name_or_path = os.path.join(pretrained_model_name_or_path, "config.json")
     else:
-        assert pretrained_model_name_or_path in MODELS, f"Choose from {list(MODELS.keys())}"
+        # assert pretrained_model_name_or_path in MODELS, f"Choose from {list(MODELS.keys())}"
         pretrained_model_name_or_path = download_from_huggingface(
             repo=MODELS[pretrained_model_name_or_path]["repo"],
             filename="config.json",
