@@ -96,7 +96,7 @@ def load_e4t_unet(pretrained_model_name_or_path=None, ckpt_path=None, **kwargs):
             assert os.path.basename(ckpt_path) == "unet.pt" or os.path.basename(ckpt_path) == "weight_offsets.pt", "You must specify the filename! (`unet.pt` or `weight_offsets.pt`)"
             config = load_config_from_pretrained(os.path.dirname(ckpt_path))
         else:
-            assert ckpt_path in MODELS, f"Choose from {list(MODELS.keys())}"
+            # assert ckpt_path in MODELS, f"Choose from {list(MODELS.keys())}"
             config = load_config_from_pretrained(ckpt_path)
             try:
                 ckpt_path = download_from_huggingface(
