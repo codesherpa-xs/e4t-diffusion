@@ -138,7 +138,8 @@ def load_e4t_encoder(ckpt_path=None, **kwargs):
             if "encoder.pt" not in ckpt_path:
                 ckpt_path = os.path.join(ckpt_path, "encoder.pt")
         else:
-            assert ckpt_path in MODELS, f"Choose from {list(MODELS.keys())}"
+            assert ckpt_path in MODELS, f"Choose from {list(MODELS.keys())}. Got {ckpt_path}"
+            ckpt_path = download_from_huggingface("
             ckpt_path = download_from_huggingface(
                 repo=MODELS[ckpt_path]["repo"],
                 filename="encoder.pt",
