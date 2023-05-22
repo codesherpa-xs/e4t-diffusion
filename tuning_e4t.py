@@ -75,6 +75,7 @@ def make_transforms(size, random_crop=False):
 
 def main():
     args = parse_args()
+    print("parsed args")
     logging_dir = os.path.join(args.output_dir, args.logging_dir)
     accelerator = Accelerator(
         gradient_accumulation_steps=args.gradient_accumulation_steps,
@@ -95,6 +96,8 @@ def main():
     
     # load pre-trained args
     pretrained_args = load_config_from_pretrained(args.pretrained_model_name_or_path)
+    
+    print("loaded pre-trained args")
     # load pre-trained model
     tokenizer = CLIPTokenizer.from_pretrained(pretrained_args.pretrained_model_name_or_path, subfolder="tokenizer")
     noise_scheduler = DDPMScheduler.from_pretrained(pretrained_args.pretrained_model_name_or_path, subfolder="scheduler")
@@ -105,6 +108,8 @@ def main():
         # load weight offsets from pre-trained model
         ckpt_path=os.path.join(args.pretrained_model_name_or_path, "weight_offsets.pt"),
     )
+    
+    print("loaded pre-trained models")
     # encoder
     e4t_encoder = load_e4t_encoder(
         word_embedding_dim=text_encoder.config.hidden_size,
@@ -133,6 +138,8 @@ def main():
             print("[WARNING] xFormers 0.0.16 cannot be used for training in some GPUs. If you observe problems during training, please update xFormers to at least 0.0.17. See https://huggingface.co/docs/diffusers/main/en/optimization/xformers for more details.")
         unet.enable_xformers_memory_efficient_attention()
         print("Using xFormers!")
+        
+    print("freeze")
     # else:
     #     raise ValueError("xformers is not available. Make sure it is installed correctly")
     # Initialize the optimizer
@@ -178,6 +185,8 @@ def main():
     pil_image_to_save = Image.fromarray(image)
     image = (image / 127.5 - 1.0).astype(np.float32)
     image = torch.from_numpy(image).permute(2, 0, 1).unsqueeze(0)
+    
+    print("dataset")
 
     # For mixed precision training we cast the unet and vae weights to half-precision
     # as these models are only used for inference, keeping weights in full precision is not required.
@@ -198,6 +207,9 @@ def main():
         unet, text_encoder, e4t_encoder, optimizer, lr_scheduler = accelerator.prepare(unet, text_encoder, e4t_encoder, optimizer, lr_scheduler)
     else:
         unet, e4t_encoder, optimizer, lr_scheduler = accelerator.prepare(unet, e4t_encoder, optimizer, lr_scheduler)
+        
+        
+    print("Prepare everything with our `accelerator`.")
 
     # Move vae and unet to device and cast to weight_dtype
     if not args.train_text_encoder:
@@ -249,6 +261,8 @@ def main():
         text_encoder.train()
     domain_class_token_id = tokenizer(pretrained_args.domain_class_token, add_special_tokens=False, return_tensors="pt").input_ids[0]
     assert domain_class_token_id.size(0) == 1
+    
+    print("Only show the progress bar once on each machine.")
 
     if args.prompt_template is None:
         args.prompt_template = pretrained_args.prompt_template
@@ -268,6 +282,7 @@ def main():
     latents = vae.encode(pixel_values.to(dtype=weight_dtype).to(accelerator.device)).latent_dist.sample().detach()
     latents = latents * vae.config.scaling_factor
     for step in range(args.max_train_steps):
+        print(f"step {step}.")
         with accelerator.accumulate(unet):
             # Sample noise that we'll add to the latents
             noise = torch.randn_like(latents)
@@ -322,6 +337,7 @@ def main():
             else:
                 raise ValueError(f"Unknown prediction type {noise_scheduler.config.prediction_type}")
             # compute loss
+            print(f"compute loss")
             loss_diff = F.mse_loss(model_pred.float(), target.float(), reduction="mean")
             loss_reg = args.reg_lambda * domain_embed.pow(2).sum()
             loss = loss_diff + loss_reg
@@ -356,9 +372,12 @@ def main():
         }
         progress_bar.set_postfix(**logs)
         accelerator.log(logs, step=global_step)
+        
+    print(f"Done")
     accelerator.wait_for_everyone()
     save_weights(global_step)
     accelerator.end_training()
+    print(f"Saved")
 
 
 if __name__ == '__main__':
