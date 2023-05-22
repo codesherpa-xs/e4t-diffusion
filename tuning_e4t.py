@@ -12,14 +12,17 @@ import albumentations
 import torch
 from torch.nn import functional as F
 
+import sys
+sys.path.append('/')
+
 from accelerate import Accelerator
 from accelerate.utils import set_seed
 from transformers import CLIPTokenizer
 from diffusers import DDPMScheduler, AutoencoderKL
 from diffusers.utils import is_xformers_available, load_image
 from diffusers.optimization import get_scheduler
-from e4t.models.modeling_clip import CLIPTextModel
-from e4t.utils import load_config_from_pretrained, load_e4t_unet, load_e4t_encoder, save_e4t_unet, save_e4t_encoder
+from e4tdiffusion.e4t.models.modeling_clip import CLIPTextModel
+from e4tdiffusion.e4t.utils import load_config_from_pretrained, load_e4t_unet, load_e4t_encoder, save_e4t_unet, save_e4t_encoder
 from pretrain_e4t import templates, art_templates, face_templates
 
 

@@ -12,7 +12,7 @@ from diffusers.models.cross_attention import AttnProcessor
 from diffusers.models.embeddings import GaussianFourierProjection, TimestepEmbedding, Timesteps
 from diffusers.models.modeling_utils import ModelMixin
 from diffusers.models.unet_2d_condition import UNet2DConditionOutput, BaseOutput
-from e4t.models.unet_2d_blocks import (
+from e4tdiffusion.e4t.models.unet_2d_blocks import (
     CrossAttnDownBlock2D,
     CrossAttnUpBlock2D,
     DownBlock2D,

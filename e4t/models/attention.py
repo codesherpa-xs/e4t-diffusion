@@ -24,7 +24,7 @@ from torch import nn
 
 from diffusers.utils.import_utils import is_xformers_available
 from diffusers.models.embeddings import CombinedTimestepLabelEmbeddings
-from e4t.models.cross_attention import CrossAttention
+from e4tdiffusion.e4t.models.cross_attention import CrossAttention
 
 
 if is_xformers_available():

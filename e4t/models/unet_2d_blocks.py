@@ -24,8 +24,8 @@ from torch import nn
 from diffusers.models.attention import AdaGroupNorm, AttentionBlock
 from diffusers.models.dual_transformer_2d import DualTransformer2DModel
 from diffusers.models.resnet import Downsample2D, FirDownsample2D, FirUpsample2D, KDownsample2D, KUpsample2D, ResnetBlock2D, Upsample2D
-from e4t.models.transformer_2d import Transformer2DModel
-from e4t.models.cross_attention import CrossAttention, CrossAttnAddedKVProcessor
+from e4tdiffusion.e4t.models.transformer_2d import Transformer2DModel
+from e4tdiffusion.e4t.models.cross_attention import CrossAttention, CrossAttnAddedKVProcessor
 
 
 def get_down_block(

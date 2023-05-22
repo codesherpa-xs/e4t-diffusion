@@ -10,8 +10,8 @@ from PIL import Image
 import torch
 from diffusers.utils import load_image as load_image_diffusers
 from diffusers import UNet2DConditionModel as OriginalUNet2DConditionModel
-from e4t.models.unet_2d_condition import UNet2DConditionModel
-from e4t.encoder import E4TEncoder
+from e4tdiffusion.e4t.models.unet_2d_condition import UNet2DConditionModel
+from e4tdiffusion.e4t.encoder import E4TEncoder
 
 
 class AttributeDict(object):
@@ -90,6 +90,7 @@ def load_config_from_pretrained(pretrained_model_name_or_path):
 
 def load_e4t_unet(pretrained_model_name_or_path=None, ckpt_path=None, **kwargs):
     assert pretrained_model_name_or_path is not None or ckpt_path is not None
+    print(f"load_e4t_unet {pretrained_model_name_or_path}, {ckpt_path}")
     if pretrained_model_name_or_path is None: # or not os.path.exists(ckpt_path):
         if os.path.exists(ckpt_path):
             assert os.path.basename(ckpt_path) == "unet.pt" or os.path.basename(ckpt_path) == "weight_offsets.pt", "You must specify the filename! (`unet.pt` or `weight_offsets.pt`)"

@@ -27,7 +27,7 @@ from diffusers.models.embeddings import ImagePositionalEmbeddings
 from diffusers.utils import BaseOutput, deprecate
 from diffusers.models.embeddings import PatchEmbed
 from diffusers.models.modeling_utils import ModelMixin
-from e4t.models.attention import BasicTransformerBlock
+from e4tdiffusion.e4t.models.attention import BasicTransformerBlock
 
 
 @dataclass

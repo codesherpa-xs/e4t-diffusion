@@ -6,7 +6,7 @@ from torch import nn
 
 from diffusers.utils import deprecate, logging
 from diffusers.utils.import_utils import is_xformers_available
-from e4t.weightoffsets import WeightOffsets
+from e4tdiffusion.e4t.weightoffsets import WeightOffsets
 
 
 logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
