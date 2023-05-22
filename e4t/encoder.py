@@ -87,16 +87,21 @@ class E4TEncoder(ModelMixin, ConfigMixin):
             freeze_clip_vision=True,
             **kwargs
     ):
+        print("Initializing E4tEncoder")
         super().__init__()
         model, _, _ = open_clip.create_model_and_transforms(arch, device=torch.device('cpu'), pretrained=version)
         del model.transformer
         self.clip_vision = model.visual
         self.clip_vision.output_tokens = True
+        
+        print("Removing proj")
         # remove proj
         self.clip_vision.proj = None
         clip_vision_hidden_size = self.clip_vision.ln_post.normalized_shape[0]
         if freeze_clip_vision:
             self.clip_vision.requires_grad_(False)
+            
+        print("unet")
         # unet
         self.unet_feature_embedder = nn.Sequential(
             nn.Linear(10880, clip_vision_hidden_size),
@@ -114,6 +119,7 @@ class E4TEncoder(ModelMixin, ConfigMixin):
             assert n_odd_layers is not None, "You must specify `n_odd_layers`!"
             n_odd_layers = int(n_odd_layers)
 
+        print("append listeners")
         for _ in range(n_odd_layers):
             self.first_linears.append(
                 nn.Linear(
@@ -127,6 +133,7 @@ class E4TEncoder(ModelMixin, ConfigMixin):
         self.antialias = antialias
         self.register_buffer('mean', torch.Tensor([0.48145466, 0.4578275, 0.40821073]), persistent=False)
         self.register_buffer('std', torch.Tensor([0.26862954, 0.26130258, 0.27577711]), persistent=False)
+        print("Done")
 
     def preprocess(self, x):
         # normalize to [0,1]
