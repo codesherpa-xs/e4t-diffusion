@@ -129,6 +129,7 @@ def save_e4t_unet(model, save_dir):
 
 
 def load_e4t_encoder(ckpt_path=None, **kwargs):
+    print(f"Loading encoder: {kwargs}")
     encoder = E4TEncoder(**kwargs)
     print(f"Loading ckpth_path: {ckpt_path}")
     if ckpt_path:
