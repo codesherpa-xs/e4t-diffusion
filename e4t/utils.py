@@ -80,9 +80,8 @@ def load_config_from_pretrained(pretrained_model_name_or_path):
     else:
         # assert pretrained_model_name_or_path in MODELS, f"Choose from {list(MODELS.keys())}"
         pretrained_model_name_or_path = download_from_huggingface(
-            repo=MODELS[pretrained_model_name_or_path]["repo"],
-            filename="config.json",
-            subfolder=MODELS[pretrained_model_name_or_path]["subfolder"]
+            repo=pretrained_model_name_or_path,
+            filename="config.json"
         )
     with open(pretrained_model_name_or_path, "r", encoding="utf-8") as f:
         pretrained_args = AttributeDict(json.load(f))
@@ -100,15 +99,13 @@ def load_e4t_unet(pretrained_model_name_or_path=None, ckpt_path=None, **kwargs):
             config = load_config_from_pretrained(ckpt_path)
             try:
                 ckpt_path = download_from_huggingface(
-                    repo=MODELS[ckpt_path]["repo"],
-                    filename="weight_offsets.pt",
-                    subfolder=MODELS[ckpt_path]["subfolder"]
+                    repo=ckpt_path,
+                    filename="weight_offsets.pt"
                 )
             except EntryNotFoundError:
                 ckpt_path = download_from_huggingface(
-                    repo=MODELS[ckpt_path]["repo"],
-                    filename="unet.pt",
-                    subfolder=MODELS[ckpt_path]["subfolder"]
+                    repo=ckpt_path,
+                    filename="unet.pt"
                 )
         pretrained_model_name_or_path = config.pretrained_model_name_or_path if config.pretrained_args is None else config.pretrained_args["pretrained_model_name_or_path"]
     unet = OriginalUNet2DConditionModel.from_pretrained(pretrained_model_name_or_path, subfolder="unet", **kwargs)
@@ -133,16 +130,16 @@ def save_e4t_unet(model, save_dir):
 
 def load_e4t_encoder(ckpt_path=None, **kwargs):
     encoder = E4TEncoder(**kwargs)
+    print(f"Loading ckpth_path: {ckpt_path}")
     if ckpt_path:
         if os.path.exists(ckpt_path):
             if "encoder.pt" not in ckpt_path:
                 ckpt_path = os.path.join(ckpt_path, "encoder.pt")
         else:
-            assert ckpt_path in MODELS, f"Choose from {list(MODELS.keys())}. Got {ckpt_path}"
+            # assert ckpt_path in MODELS, f"Choose from {list(MODELS.keys())}. Got {ckpt_path}"
             ckpt_path = download_from_huggingface(
-                repo=MODELS[ckpt_path]["repo"],
-                filename="encoder.pt",
-                subfolder=MODELS[ckpt_path]["subfolder"]
+                repo=ckpt_path,
+                filename="encoder.pt"
             )
         state_dict = torch.load(ckpt_path, map_location="cpu")
         print(f"Resuming from {ckpt_path}")
